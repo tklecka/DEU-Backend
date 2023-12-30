@@ -1,0 +1,6 @@
+@DEU_Backend_HostAddress = http://localhost:5184
+
+GET {{DEU_Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DEU-Backend", "DEU-Backend\DEU-Backend.csproj", "{54255F04-C109-43F9-B2A5-6236B2CCF84B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54255F04-C109-43F9-B2A5-6236B2CCF84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54255F04-C109-43F9-B2A5-6236B2CCF84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54255F04-C109-43F9-B2A5-6236B2CCF84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54255F04-C109-43F9-B2A5-6236B2CCF84B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8CBD87D8-A79A-413A-9B3E-6AD657ABE8A1}
+	EndGlobalSection
+EndGlobal
