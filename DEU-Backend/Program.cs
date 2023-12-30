@@ -1,5 +1,8 @@
+using Asp.Versioning;
 using DEU_Backend;
+using DEU_Backend.ConfigureOptions;
 using DEU_Backend.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +10,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<DatabaseConfigurationService>();
 builder.Services.AddDbContext<DeuDbContext>();
 
+builder.Services.AddApiVersioning(
+                    options =>
+                    {
+                        options.DefaultApiVersion = new ApiVersion(1, 0);
+                        options.AssumeDefaultVersionWhenUnspecified = true;
+                        options.ReportApiVersions = true;
+                        options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+                    })
+                .AddMvc()
+                .AddApiExplorer(
+                    options =>
+                    {
+                        options.GroupNameFormat = "'v'VVV";
+                        options.SubstituteApiVersionInUrl = true;
+                    });
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    options =>
+    {
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    }
+);
+
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 var app = builder.Build();
 
