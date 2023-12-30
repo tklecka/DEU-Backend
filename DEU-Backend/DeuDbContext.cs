@@ -1,4 +1,5 @@
 ﻿using DEU_Backend.Services;
+using DEU_Lib.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace DEU_Backend
@@ -29,5 +30,6 @@ namespace DEU_Backend
             }
         }
 
+        public DbSet<WaKaWaterSource> WaKaWaterSources { get; set; } = null!;
     }
 }

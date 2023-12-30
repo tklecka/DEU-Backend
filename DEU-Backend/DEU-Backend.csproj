@@ -30,4 +30,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DEU-Lib\DEU-Lib.csproj" />
+  </ItemGroup>
+
 </Project>

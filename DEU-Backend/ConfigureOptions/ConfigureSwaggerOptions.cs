@@ -5,15 +5,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DEU_Backend.ConfigureOptions
 {
-    public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
+    public class ConfigureSwaggerOptions(
+        IApiVersionDescriptionProvider provider) : IConfigureNamedOptions<SwaggerGenOptions>
     {
-        private readonly IApiVersionDescriptionProvider _provider;
-
-        public ConfigureSwaggerOptions(
-            IApiVersionDescriptionProvider provider)
-        {
-            _provider = provider;
-        }
+        private readonly IApiVersionDescriptionProvider _provider = provider;
 
         /// <summary>
         /// Configure each API discovered for Swagger Documentation
@@ -40,7 +35,7 @@ namespace DEU_Backend.ConfigureOptions
         /// </summary>
         /// <param name="desc"></param>
         /// <returns>Information about the API</returns>
-        private OpenApiInfo CreateVersionInfo(
+        private static OpenApiInfo CreateVersionInfo(
                 ApiVersionDescription desc)
         {
             var info = new OpenApiInfo()

@@ -2,6 +2,7 @@
 using DEU_Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DEU_Backend.Migrations
 {
     [DbContext(typeof(DeuDbContext))]
-    partial class DeuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231230184703_AddWaKaWaterSources")]
+    partial class AddWaKaWaterSources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
