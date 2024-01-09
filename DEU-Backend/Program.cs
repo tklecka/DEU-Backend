@@ -7,6 +7,8 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<CustomServiceImplFetcherService>();
+builder.Services.AddScoped<WaKaService>();
 builder.Services.AddSingleton<DatabaseConfigurationService>();
 builder.Services.AddDbContext<DeuDbContext>();
 

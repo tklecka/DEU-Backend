@@ -7,11 +7,8 @@ namespace DEU_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WaKaController(DeuDbContext deuDbContext, IConfiguration configuration) : ControllerBase
+    public class WaKaController(WaKaService waKaService) : ControllerBase
     {
-        private readonly DeuDbContext _deuDbContext = deuDbContext;
-        private readonly IConfiguration _configuration = configuration;
-
         /// <summary>
         /// Fetch WaKa POIs from WaKa service and store/update them in the database and remove old POIs from the database that are not in the new list.
         /// </summary>
@@ -22,52 +19,15 @@ namespace DEU_Backend.Controllers
         [HttpGet("fetchWaKaFromService")]
         public async Task<IActionResult> FetchWaKaFromServiceAsync()
         {
-            CustomServiceImplFetcherService _customServiceImplFetcherService = new CustomServiceImplFetcherService(_configuration);
-            var wakaService = _customServiceImplFetcherService.GetWaKaDataFetchService();
-
-            //Get config path from config
-            var configPath = _configuration.GetSection("ConfigPaths").GetSection("WaKaDataFetchServiceConfigPath").Value;
-            if (configPath == null)
+            try
             {
-                return BadRequest("WaKaDataFetchServiceConfigPath not found in appsettings.json");
+                var resp = await waKaService.FetchAndUpdateWaKaDataAsync();
+                return Ok(resp);
             }
-
-            var data = await wakaService.FetchDataAsync(configPath, 48.3700241, 14.5150614); //TODO: Get coordinates from config or database
-
-            //Delete old WaKa POIs where SourceWaKaWaterSourceId is not in the new list
-            var oldWaKaPOIs = await _deuDbContext.WaKaWaterSources.Where(p => !data.Select(d => d.SourceWaKaWaterSourceId).Contains(p.SourceWaKaWaterSourceId)).ToListAsync();
-            _deuDbContext.WaKaWaterSources.RemoveRange(oldWaKaPOIs);
-
-            //Add or update WaKa POIs
-            foreach (var poi in data)
+            catch (Exception e)
             {
-                var poiInDb = await _deuDbContext.WaKaWaterSources.FirstOrDefaultAsync(p => p.SourceWaKaWaterSourceId == poi.SourceWaKaWaterSourceId);
-                if (poiInDb == null)
-                {
-                    await _deuDbContext.WaKaWaterSources.AddAsync((WaKaWaterSource)poi);
-                }
-                else
-                {
-                    poiInDb.Address = poi.Address;
-                    poiInDb.Capacity = poi.Capacity;
-                    poiInDb.Connections = poi.Connections;
-                    poiInDb.Description = poi.Description;
-                    poiInDb.Flowrate = poi.Flowrate;
-                    poiInDb.IconAnchorX = poi.IconAnchorX;
-                    poiInDb.IconAnchorY = poi.IconAnchorY;
-                    poiInDb.IconHeight = poi.IconHeight;
-                    poiInDb.IconUrl = poi.IconUrl;
-                    poiInDb.IconWidth = poi.IconWidth;
-                    poiInDb.Latitude = poi.Latitude;
-                    poiInDb.Longitude = poi.Longitude;
-                    poiInDb.Name = poi.Name;
-                    poiInDb.SourceType = poi.SourceType;
-                }
+                return BadRequest(e.Message);
             }
-
-            await _deuDbContext.SaveChangesAsync();
-
-            return Ok(data);
         }
 
         /// <summary>
@@ -81,28 +41,8 @@ namespace DEU_Backend.Controllers
         /// <response code="200">Returns the list of WaKa POIs</response>
         /// <response code="404">No WaKa POIs found</response>
         /// <response code="500">Internal Server Error</response>
-        [HttpGet("getAllWaKa")]
-        public async Task<IActionResult> GetAllWaKaAsync([FromQuery] int page = 0, [FromQuery] int pageSize = 0)
-        {
-            if (page == 0 || pageSize == 0)
-            {
-                var data = await _deuDbContext.WaKaWaterSources.ToListAsync();
-                if (data.Count == 0)
-                {
-                    return NotFound("No WaKa POIs found");
-                }
-                return Ok(data);
-            }
-            else
-            {
-                var data = await _deuDbContext.WaKaWaterSources.Skip(page * pageSize).Take(pageSize).ToListAsync();
-                if (data.Count == 0)
-                {
-                    return NotFound("No WaKa POIs found");
-                }
-                return Ok(data);
-            }
-        }
+        [HttpGet]
+        public async Task<IActionResult> GetAsync([FromQuery] int page = 0, [FromQuery] int pageSize = 0) => Ok(await waKaService.GetAsync(page, pageSize));
 
         /// <summary>
         /// Get a WaKa POI by its ID
@@ -114,15 +54,15 @@ namespace DEU_Backend.Controllers
         /// <response code="200">Returns the WaKa POI</response>
         /// <response code="404">WaKa POI not found</response>
         /// <response code="500">Internal Server Error</response>
-        [HttpGet("getWaKaById/{id}")]
-        public async Task<IActionResult> GetWaKaByIdAsync([FromRoute] int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var data = await _deuDbContext.WaKaWaterSources.FirstOrDefaultAsync(p => p.WaKaWaterSourceId == id);
-            if (data == null)
+            var poi = await waKaService.GetByIdAsync(id);
+            if (poi == null)
             {
                 return NotFound("WaKa POI not found");
             }
-            return Ok(data);
+            return Ok(poi);
         }
 
         /// <summary>
@@ -136,17 +76,15 @@ namespace DEU_Backend.Controllers
         /// <response code="200">Returns the updated WaKa POI</response>
         /// <response code="404">WaKa POI not found</response>
         /// <response code="500">Internal Server Error</response>
-        [HttpPut("updateWaKa/{id}")]
-        public async Task<IActionResult> UpdateWaKaAsync([FromRoute] int id, [FromBody] WaKaWaterSource poi)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] WaKaWaterSource poi)
         {
-            var poiInDb = await _deuDbContext.WaKaWaterSources.FirstOrDefaultAsync(p => p.WaKaWaterSourceId == id);
-            if (poiInDb == null)
+            var poiResult = await waKaService.UpdateAsync(id, poi);
+            if (poiResult == null)
             {
                 return NotFound("WaKa POI not found");
             }
-            poiInDb = poi;
-            await _deuDbContext.SaveChangesAsync();
-            return Ok(poiInDb);
+            return Ok(poiResult);
         }
 
         /// <summary>
@@ -159,17 +97,15 @@ namespace DEU_Backend.Controllers
         /// <response code="200">Returns the deleted WaKa POI</response>
         /// <response code="404">WaKa POI not found</response>
         /// <response code="500">Internal Server Error</response>
-        [HttpDelete("deleteWaKa/{id}")]
-        public async Task<IActionResult> DeleteWaKaAsync([FromRoute] int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var poiInDb = await _deuDbContext.WaKaWaterSources.FirstOrDefaultAsync(p => p.WaKaWaterSourceId == id);
-            if (poiInDb == null)
+            var poi = await waKaService.DeleteAsync(id);
+            if (poi == null)
             {
                 return NotFound("WaKa POI not found");
             }
-            _deuDbContext.WaKaWaterSources.Remove(poiInDb);
-            await _deuDbContext.SaveChangesAsync();
-            return Ok(poiInDb);
+            return Ok(poi);
         }
     }
 }
