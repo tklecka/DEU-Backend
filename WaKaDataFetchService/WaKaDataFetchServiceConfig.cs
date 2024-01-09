@@ -31,6 +31,8 @@ namespace WaKaDataFetchService
 
         public static async Task<WaKaDataFetchServiceConfig?> FromJsonFileAsync(string path)
         {
+            if (!File.Exists(path))
+                return null;
             return FromJsonString(await File.ReadAllTextAsync(path));
         }
     }

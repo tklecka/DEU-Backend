@@ -728,3 +728,6 @@ obj/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,csharp,aspnetcore,dotnetcore
 DEU-Backend/demo.db
+DEU-Backend/demo.db-shm
+DEU-Backend/demo.db-wal
+DEU-Backend/ConfigPaths/

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DEU_Backend.Migrations
 {
     [DbContext(typeof(DeuDbContext))]
-    [Migration("20231230184703_AddWaKaWaterSources")]
-    partial class AddWaKaWaterSources
+    [Migration("20240109185929_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace DEU_Backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("DEU_Backend.Model.WaKaWaterSource", b =>
+            modelBuilder.Entity("DEU_Lib.Model.WaKaWaterSource", b =>
                 {
                     b.Property<int>("WaKaWaterSourceId")
                         .ValueGeneratedOnAdd()
@@ -62,6 +62,14 @@ namespace DEU_Backend.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceWaKaWaterSourceId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -13,7 +13,12 @@ namespace WaKaDataFetchService
 
         public async Task<IEnumerable<IWaKaWaterSource>> FetchDataAsync(string configPath, double fireDepartmentLocationLat, double fireDepartmentLocationLng)
         {
-            var config = await WaKaDataFetchServiceConfig.FromJsonFileAsync(configPath) ?? throw new Exception("Config for WaKaDataFetchService could not be loaded");
+            var config = await WaKaDataFetchServiceConfig.FromJsonFileAsync(configPath);
+            if (config == null)
+            {
+                await CreateConfig(configPath);
+                throw new Exception("Config file not found. Created new config file. Please fill in the config file and restart the service.");
+            }
 
             var url = $"{config.ApiUrl}&lat={fireDepartmentLocationLat}&lng={fireDepartmentLocationLng}&range={config.Range}&numItems={config.NumItems}&token={config.ApiToken}";
 

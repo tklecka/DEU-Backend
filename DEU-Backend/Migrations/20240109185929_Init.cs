@@ -5,7 +5,7 @@
 namespace DEU_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddWaKaWaterSources : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,9 @@ namespace DEU_Backend.Migrations
                 {
                     WaKaWaterSourceId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    SourceWaKaWaterSourceId = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
+                    SourceType = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Address = table.Column<string>(type: "TEXT", nullable: true),
                     IconUrl = table.Column<string>(type: "TEXT", nullable: true),

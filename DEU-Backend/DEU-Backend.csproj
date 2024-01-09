@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\DEU-Lib\DEU-Lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DEU-Lib\DEU-Lib.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
